@@ -2,23 +2,23 @@ name: Build and Test
 on: [push, pull_request]
 jobs:
   windows:
-    defaults:
-      run:
-        shell: cmd
+    runs-on: windows-latest
+    continue-on-error: false
     strategy:
+      fail-fast: false
       matrix:
-          os: [ windows-2019 ]
           version: ["7.4", "8.1", "8.2", "8.3"]
           arch: [x64]
           ts: [ts]
-    runs-on: windows-latest
     steps:
       - name: Configure Git
         run: git config --global core.autocrlf false
       - name: Checkout mailparse
         uses: actions/checkout@v4
-      - name: Setup PHP
-        id: setup-php
+        with:
+          submodules: true
+      - name: Setup PHP ${{ matrix.php }}
+        id: setup-php-sdk
         uses: php/setup-php-sdk@v0.8
         with:
           version: ${{matrix.version}}
@@ -28,13 +28,12 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{matrix.arch}}
-          toolset: ${{steps.setup-php.outputs.toolset}}
-      - name: phpize
-        run: phpize
-      - name: configure
-        run: configure --enable-mailparse --with-prefix=${{steps.setup-php.outputs.prefix}}
-      - name: make
-        run: nmake
+          toolset: ${{steps.setup-php-sdk.outputs.toolset}}
+      - name: Build mailparse
+        run: |
+          phpize
+          ./configure --enable-mailparse --with-prefix=${{steps.setup-php-sdk.outputs.prefix}}
+          nmake
       - name: package
         run: |
           md binaries
