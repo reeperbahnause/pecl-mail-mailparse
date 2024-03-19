@@ -38,10 +38,11 @@ jobs:
         run: |
           md binaries
           Get-ChildItem -Recurse -Filter "php_mailparse.dll" | ForEach-Object {Copy-Item -Path $_.FullName -Destination "binaries"}
+          Get-ChildItem -Recurse -Filter "php_mailparse.dll" | ForEach-Object {Copy-Item -Path $_.FullName -Destination ${{steps.setup-php-sdk.outputs.prefix}}\ext\php_mbstring.dll}
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: mailparse-${{matrix.version}}-x64-${{matrix.ts}}
           path: binaries
       - name: test
-        run: nmake test TESTS="-d extension=${{steps.setup-php-sdk.outputs.prefix}}\ext\php_mbstring.dll --show-diff tests"
+        run: nmake test TESTS="--verbose -d extension=${{steps.setup-php-sdk.outputs.prefix}}\ext\php_mbstring.dll --show-diff tests"
