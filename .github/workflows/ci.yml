@@ -7,9 +7,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-          version: ["7.4", "8.1", "8.2", "8.3"]
+          # version: ["7.4", "8.1", "8.2", "8.3"]
+          version: ["7.4","8.3"]
           arch: [x64]
-          ts: [nts, ts]
+          # ts: [nts, ts]
+          ts: [ts]
     steps:
       - name: Configure Git
         run: git config --global core.autocrlf false
@@ -38,7 +40,7 @@ jobs:
         run: |
           md binaries
           Get-ChildItem -Recurse -Filter "php_mailparse.dll" | ForEach-Object {Copy-Item -Path $_.FullName -Destination "binaries"}
-          Get-ChildItem -Recurse -Filter "php_mailparse.dll" | ForEach-Object {Copy-Item -Path $_.FullName -Destination ${{steps.setup-php-sdk.outputs.prefix}}\ext\php_mbstring.dll}
+          Get-ChildItem -Recurse -Filter "php_mailparse.dll" | ForEach-Object {Copy-Item -Path $_.FullName -Destination ${{steps.setup-php-sdk.outputs.prefix}}\ext\php_mailparse.dll}
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
