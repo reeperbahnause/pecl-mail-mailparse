@@ -34,13 +34,12 @@ jobs:
       - name: Build mailparse
         run: |
           phpize
-          ./configure --enable-mailparse --with-prefix=${{steps.setup-php-sdk.outputs.prefix}}
+          ./configure --enable-mailparse --enable-mbstring --with-prefix=${{steps.setup-php-sdk.outputs.prefix}}
           nmake
       - name: package
         run: |
           md binaries
           Get-ChildItem -Recurse -Filter "php_mailparse.dll" | ForEach-Object {Copy-Item -Path $_.FullName -Destination "binaries"}
-          Get-ChildItem -Recurse -Filter "php_mailparse.dll" | ForEach-Object {Copy-Item -Path $_.FullName -Destination ${{steps.setup-php-sdk.outputs.prefix}}\ext\php_mailparse.dll}
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
