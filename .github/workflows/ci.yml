@@ -44,4 +44,4 @@ jobs:
           name: mailparse-${{matrix.php}}-x64-${{matrix.ts}}
           path: binaries
       - name: test
-        run: nmake test TESTS="-d extension=${{steps.setup-php.outputs.prefix}}\ext\php_mbstring.dll --show-diff tests"
+        run: nmake test TESTS="-d extension=${{steps.setup-php-sdk.outputs.prefix}}\ext\php_mbstring.dll --show-diff tests"
