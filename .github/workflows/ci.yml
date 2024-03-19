@@ -16,16 +16,14 @@ jobs:
       - name: Configure Git
         run: git config --global core.autocrlf false
       - name: Checkout mailparse
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup PHP
         id: setup-php
-        uses: shivammathur/setup-php@v2
+        uses: php/setup-php-sdk@v0.8
         with:
           version: ${{matrix.version}}
           arch: ${{matrix.arch}}
           ts: ${{matrix.ts}}
-        env:
-          phpts: ${{matrix.ts}}
       - name: Enable Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1
         with:
@@ -37,5 +35,14 @@ jobs:
         run: configure --enable-mailparse --with-prefix=${{steps.setup-php.outputs.prefix}}
       - name: make
         run: nmake
+      - name: package
+        run: |
+          md binaries
+          Get-ChildItem -Recurse -Filter "php_mailparse.dll" | ForEach-Object {Copy-Item -Path $_.FullName -Destination "binaries"}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: mailparse-${{matrix.php}}-x64-${{matrix.ts}}
+          path: binaries
       - name: test
         run: nmake test TESTS="-d extension=${{steps.setup-php.outputs.prefix}}\ext\php_mbstring.dll --show-diff tests"
