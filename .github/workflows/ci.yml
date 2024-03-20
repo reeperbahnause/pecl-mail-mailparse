@@ -32,7 +32,7 @@ jobs:
       - name: Build mailparse for Windows
         run: |
           phpize
-          ./configure --enable-mailparse --with-prefix=${{steps.setup-php-sdk.outputs.prefix}}
+          ./configure --enable-test-ini --enable-mailparse --with-prefix=${{steps.setup-php-sdk.outputs.prefix}}
           nmake
       - name: package
         run: |
