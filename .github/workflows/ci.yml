@@ -45,6 +45,7 @@ jobs:
           path: binaries
       - name: test
         run: |
+          $Env:TEST_PHP_EXECUTABLE = "D:\a\pecl-mail-mailparse\pecl-mail-mailparse\php-bin\php.exe -d display_errors=off -d display_startup_errors=off"
           $Env:TEST_PHP_ARGS = "-d display_errors=off -d display_startup_errors=off -d extension=${{steps.setup-php-sdk.outputs.prefix}}\ext\php_mbstring.dll -d extension=D:\a\pecl-mail-mailparse\pecl-mail-mailparse\x64\Release_TS\php_mailparse.dll"
           $Env:TEST_PHP_ARGS
           nmake test TESTS="--show-diff tests"
